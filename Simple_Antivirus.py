@@ -5,6 +5,7 @@ import requests
 import psutil
 import win32api
 import win32con
+import win32file
 import win32security
 import win32process
 import win32event
@@ -19,7 +20,7 @@ import queue
 import shutil
 
 # Configuration
-API_KEY = "Your_virustotal_API_Key_here"  # Replace with your VirusTotal API key
+API_KEY = "your_virustotal_api_key"  # Replace with your VirusTotal API key
 QUARANTINE_PATH = Path(r"C:\ProgramData\Antivirus\Quarantine")
 LOG_FILE = Path(r"C:\ProgramData\Antivirus\antivirus.log")
 CHECK_INTERVAL = 5  # Seconds between processing batches of files
@@ -191,7 +192,7 @@ def scan_existing_files():
     drives = [d for d in win32api.GetLogicalDriveStrings().split('\0') if d]
     for drive in drives:
         try:
-            drive_type = win32api.GetDriveType(drive)
+            drive_type = win32file.GetDriveType(drive)
             if drive_type in (win32con.DRIVE_FIXED, win32con.DRIVE_REMOVABLE, win32con.DRIVE_REMOTE):
                 for root, _, files in os.walk(drive):
                     for file in files:
@@ -243,7 +244,7 @@ def setup_observers():
     drives = [d for d in win32api.GetLogicalDriveStrings().split('\0') if d]
     for drive in drives:
         try:
-            drive_type = win32api.GetDriveType(drive)
+            drive_type = win32file.GetDriveType(drive)
             if drive_type in (win32con.DRIVE_FIXED, win32con.DRIVE_REMOVABLE, win32con.DRIVE_REMOTE):
                 event_handler = FileEventHandler()
                 observer.schedule(event_handler, drive, recursive=True)
